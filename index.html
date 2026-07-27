@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق الواقع المعزز - الهندسة الفراغية</title>
+    <!-- استدعاء مكتبات الواقع المعزز والمجسمات -->
+    <script src="https://aframe.io"></script>
+    <script src="https://githack.com"></script>
+    
+    <style>
+        /* تصميم واجهة التحكم العلوية لاختيار المجموعات وفق التصميم العاملي */
+        .controls-container {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            font-family: Arial, sans-serif;
+            direction: rtl;
+        }
+        .btn-pattern {
+            padding: 8px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-video { background-color: #ff4757; color: white; }
+        .btn-image { background-color: #2ed573; color: white; }
+        /* تصميم لوحة المعادلات الجبرية الجانبية */
+        .equations-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 10px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            direction: ltr;
+            display: none;
+        }
+    </style>
+</head>
+<body style="margin: 0; overflow: hidden;">
+
+    <!-- واجهة أزرار التبديل بين النمطين وفق شروط التجربة -->
+    <div class="controls-container">
+        <h3>بيئة المعالجة التجريبية - معادلة المستوى</h3>
+        <button class="btn-pattern btn-video" onclick="activateVideoPattern()">نمط الفيديو الديناميكي</button>
+        <button class="btn-pattern btn-image" onclick="activateImagePattern()">نمط الصور تفاعلية الاستاتيكية</button>
+        <div id="status-text" style="margin-top: 5px; color: #555;">وجه الكاميرا نحو الماركر لرؤية المجسم</div>
+    </div>
+
+    <!-- لوحة المعادلات المصاحبة -->
+    <div id="eq-panel" class="equations-panel">
+        <b>Plane Equations:</b><br>
+        1. Vector: n . (r - A) = 0<br>
+        2. Standard: a(x-x1) + b(y-y1) + c(z-z1) = 0<br>
+        3. General: ax + by + cz + d = 0
+    </div>
+
+    <!-- مشهد الواقع المعزز عبر الكاميرا -->
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+        
+        <!-- المحفز البصري (Marker): نستخدم ماركر هيرو القياسي لتسهيل التجربة -->
+        <a-marker preset="hero" id="plane-marker">
+            
+            <!-- الكائنات ثلاثية الأبعاد المشتركة (محاور الإحداثيات X, Y, Z) -->
+            <!-- محور X باللون الأحمر -->
+             
+            <!-- محور Y باللون الأخضر -->
+             
+            <!-- محور Z باللون الأزرق -->
+             
+
+            <!-- [1] مجموعة كائنات نمط الصور التفاعلية الاستاتيكية -->
+            
+                <!-- سطح المستوى الفراغي (مربع مائل شفاف رؤية تعامده) -->
+                <a-box position="0 0.5 0" rotation="30 45 15" width="2" height="0.02" depth="2" 
+                       material="color: #ffa500; opacity: 0.6; transparent: true"></a-box>
+                <!-- المتجه العمودي على المستوى n -->
+                <a-cylinder position="0 1 0" radius="0.03" height="1" color="#ff4757"></a-cylinder>
+                <!-- رأس المتجه العمودي (سهم) -->
+                <a-cone position="0 1.5 0" radius-bottom="0.08" height="0.2" color="#ff4757"></a-cone>
+                <!-- نقطة معلومة A ونقطة اختيارية P -->
+                <a-sphere position="-0.3 0.4 0.2" radius="0.06" color="#ffffff"></a-sphere>
+                <a-sphere position="0.4 0.6 -0.3" radius="0.06" color="#000000"></a-sphere>
+            
+
+            <!-- [2] مجموعة كائنات نمط الفيديو الديناميكي المتحرك -->
+            
+                <!-- المستوى الذي سينبثق ويتحرك بالأنيميشن تلقائياً مع خط الزمن -->
+                <a-box id="animated-plane" position="0 0 0" rotation="0 0 0" width="0" height="0.02" depth="0" 
+                       material="color: #00ffff; opacity: 0.7; transparent: true">
+                    <a-animation attribute="width" from="0" to="2" dur="3000" fill="forwards"></a-animation>
+                    <a-animation attribute="depth" from="0" to="2" dur="3000" fill="forwards"></a-animation>
+                    <a-animation attribute="rotation" from="0 0 0" to="30 45 15" dur="4000" delay="3000" fill="forwards"></a-animation>
+                </a-box>
+                <!-- السهم العمودي الذي يظهر بتأخر تتبعاً لخطوات النمذجة الإجرائية -->
+                
+                    <a-cylinder position="0 1 0" radius="0.03" height="1" color="#ff4757"></a-cylinder>
+                    <a-cone position="0 1.5 0" radius-bottom="0.08" height="0.2" color="#ff4757"></a-cone>
+                
+            
+
+        </a-marker>
+
+        <!-- كائن الكاميرا الحقيقي للتشغيل -->
+        
+    </a-scene>
+
+    <!-- البرمجة الذكية لإدارة المجموعات وتأصيل مهارات التفاعل والتحكم للمتعلم -->
+    <script>
+        const staticGroup = document.getElementById('static-image-group');
+        const dynamicGroup = document.getElementById('dynamic-video-group');
+        const animatedVector = document.getElementById('animated-vector');
+        const eqPanel = document.getElementById('eq-panel');
+        const statusText = document.getElementById('status-text');
+
+        // [تطبيق سيناريو نمط الفيديو]
+        function activateVideoPattern() {
+            // إخفاء نمط الصور وتصفية المشهد
+            staticGroup.setAttribute('visible', 'false');
+            eqPanel.style.display = 'none';
+            
+            // تفعيل نمط الفيديو وإعادة تشغيل الأنيميشن تلقائياً
+            dynamicGroup.setAttribute('visible', 'true');
+            statusText.innerText = "المجموعة (1 و 2): عرض خطوات استنتاج المعادلة تلقائياً بالتسلسل الزمني";
+            
+            // محاكاة خط زمن الفيديو: تتابع المثيرات البصرية
+            setTimeout(() => {
+                animatedVector.setAttribute('visible', 'true');
+            }, 5000); // يظهر المتجه تلقائياً بعد 5 ثوانٍ من رسم المستوى
+        }
+
+        // [تطبيق سيناريو نمط الصور التفاعلية الاستاتيكية للتعلم المنظم ذاتياً]
+        function activateImagePattern() {
+            // إخفاء نمط الفيديو المتلاشي
+            dynamicGroup.setAttribute('visible', 'false');
+            animatedVector.setAttribute('visible', 'false');
+            
+            // إظهار كائنات النمط الاستاتيكي بالكامل وبشكل مستقر بصرياً مع اللوحة
+            staticGroup.setAttribute('visible', 'true');
+            eqPanel.style.display = 'block';
+            statusText.innerText = "المجموعة (3 و 4): الكائن مستقر بالكامل. استخدم يدك للتدوير والفحص بحريتك الذاتية";
+            
+            // تفعيل ميزة التحكم الكامل للمتعلم (Learner Control) عبر اللمس والتحريك
+            // مكتبة A-Frame تدعم تدوير الماركر ذاتياً بالماوس أو سحب الشاشة باللمس تلقائياً
+        }
+    </script>
+</body>
+</html>
